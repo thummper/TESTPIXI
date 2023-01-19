@@ -13,7 +13,7 @@ class Game {
     base;
     graphics;
     enemies = [];
-    maxEnemies = 10;
+    maxEnemies = 5;
     idHandler;
     constructor(app){
         this.pApp = app;
@@ -136,6 +136,9 @@ class Enemy extends Entity{
     mergeCD = 0;
     id;
 
+    ux;
+    uy;
+
 
 
     constructor(id, health, location){
@@ -146,14 +149,29 @@ class Enemy extends Entity{
 
     update(delta){
         // Move towards target location
+
+
         let dx = this.targetLocation[0] - this.location[0];
         let dy = this.targetLocation[1] - this.location[1];
 
+        let targetDist = Math.hypot(dx, dy);
+
+        if(this.ux == null || this.uy == null){
+            this.ux = dx / targetDist;
+            this.uy = dy / targetDist;
+        }
+
+        if(targetDist <= this.size){
+            this.moveSpeed = 0;
+        }
+
         // Need to move in direction of unit vector * speed I think
         
+        
+        //console.log((this.ux * this.moveSpeed), " ", (this.uy * this.moveSpeed))
 
-        this.location[0] += dx * (this.moveSpeed * (delta / 5000));
-        this.location[1] += dy * (this.moveSpeed * (delta / 5000));
+        this.location[0] += this.ux * this.moveSpeed;
+        this.location[1] += this.uy * this.moveSpeed;
 
         this.mergeCD -= delta;
         if(this.mergeCD < 0){
